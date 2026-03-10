@@ -16,7 +16,7 @@ def create_form_definition(db: Session, form_data: FormDefinitionCreate) -> Form
 
     db_form = FormDefinition(
         name=form_data.name,
-        schema_json=form_data.schema.model_dump(),
+        schema_json=form_data.form_schema.model_dump(),
         logic_rules=[r.model_dump() for r in (form_data.logic_rules or [])],
         version=next_version,
     )
@@ -35,7 +35,7 @@ def update_form_definition(db: Session, form_id: int, form_data: FormDefinitionC
     if not form:
         return None
     form.name = form_data.name
-    form.schema_json = form_data.schema.model_dump()
+    form.schema_json = form_data.form_schema.model_dump()
     form.logic_rules = [r.model_dump() for r in (form_data.logic_rules or [])]
     form.version += 1
     db.commit()

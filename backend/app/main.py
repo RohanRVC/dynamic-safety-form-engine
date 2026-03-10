@@ -64,6 +64,15 @@ app.include_router(form_router.router)
 app.include_router(submission_router.router)
 
 
+@app.get("/")
+def root():
+    return {
+        "name": "Dynamic Safety Form Engine",
+        "docs": "/docs",
+        "health": "/health",
+    }
+
+
 @app.get("/health")
 def health_check():
     return {"status": "healthy", "version": "1.0.0"}

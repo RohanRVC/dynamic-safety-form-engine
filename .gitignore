@@ -30,6 +30,7 @@ frontend/.env.local
 .vscode/
 .idea/
 *.swp
+backend\.env.example
 *.swo
 *~
 

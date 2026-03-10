@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, Field, field_validator
 from typing import Any, Optional
 from datetime import datetime
 
@@ -61,8 +61,10 @@ class LogicRule(BaseModel):
 
 class FormDefinitionCreate(BaseModel):
     name: str
-    schema: FormSchemaBody
+    form_schema: FormSchemaBody = Field(alias="schema")
     logic_rules: Optional[list[LogicRule]] = []
+
+    model_config = {"populate_by_name": True}
 
 
 class FormDefinitionResponse(BaseModel):
