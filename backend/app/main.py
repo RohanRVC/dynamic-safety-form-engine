@@ -65,6 +65,7 @@ app.include_router(submission_router.router)
 
 
 @app.get("/")
+@app.head("/")
 def root():
     return {
         "name": "Dynamic Safety Form Engine",
