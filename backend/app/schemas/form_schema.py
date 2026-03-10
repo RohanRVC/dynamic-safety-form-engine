@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 from typing import Any, Optional
 from datetime import datetime
 
@@ -70,12 +70,27 @@ class FormDefinitionCreate(BaseModel):
 class FormDefinitionResponse(BaseModel):
     id: int
     name: str
-    schema_json: dict[str, Any]
+    form_schema_json: dict[str, Any] = Field(alias="schema_json")
     logic_rules: list[dict[str, Any]]
     version: int
     created_at: datetime
 
-    model_config = {"from_attributes": True}
+    model_config = {"from_attributes": True, "populate_by_name": True}
+
+    @model_validator(mode="before")
+    @classmethod
+    def map_orm_schema_json(cls, data: Any) -> Any:
+        """When building from ORM, map schema_json -> form_schema_json so we don't shadow BaseModel."""
+        if hasattr(data, "schema_json"):
+            return {
+                "id": data.id,
+                "name": data.name,
+                "form_schema_json": getattr(data, "schema_json"),
+                "logic_rules": getattr(data, "logic_rules", []) or [],
+                "version": data.version,
+                "created_at": data.created_at,
+            }
+        return data
 
 
 class FormDefinitionListResponse(BaseModel):
