@@ -9,8 +9,4 @@ python-dotenv==1.0.1
 python-multipart==0.0.19
 supabase==2.11.0
 httpx==0.28.1
-<<<<<<< HEAD
 gunicorn==21.2.0
-=======
-gunicorn==21.2.0
->>>>>>> d5adc16defbc4b7e58eafd90e681e9557931d4ef
