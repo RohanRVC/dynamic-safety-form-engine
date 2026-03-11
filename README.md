@@ -2,7 +2,7 @@
 
 A full-stack, production-quality dynamic form engine for safety inspections. Administrators create custom form templates with schema-driven fields, logic rules, and dynamic data sources. Users fill forms, upload videos, and submit inspection data.
 
-Live Link-: dynamic-safety-form-engine.vercel.app
+Live Link-: https://dynamic-safety-form-engine.vercel.app/
 
 <img width="1919" height="996" alt="image" src="https://github.com/user-attachments/assets/4c58d21f-2ce9-49d8-b695-91369f824971" />
 
