@@ -52,15 +52,15 @@ export default function FormTemplatesPage() {
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 pb-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold">Form Templates</h1>
           <p className="text-sm text-muted-foreground mt-1">
             {query.trim() ? `${filteredForms.length} of ${forms.length} templates` : `${forms.length} templates created`}
           </p>
         </div>
-        <div className="flex gap-2 items-center">
+        <div className="flex flex-wrap gap-2 items-center">
           <span className="text-xs text-muted-foreground hidden sm:inline">Create form → use Save Template at bottom</span>
           <Link to="/form-renderer">
             <Button variant="outline">

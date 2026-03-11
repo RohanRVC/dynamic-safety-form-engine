@@ -12,9 +12,9 @@ export default function FormRendererPage() {
   const { schema, loading: schemaLoading } = useFormSchema(selectedFormId);
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-full flex-col lg:flex-row overflow-hidden">
       {/* Form Selector Sidebar */}
-      <div className="w-72 border-r flex flex-col">
+      <div className="w-full lg:w-72 flex-shrink-0 border-b lg:border-b-0 lg:border-r flex flex-col max-h-[40vh] lg:max-h-none">
         <div className="p-4 border-b">
           <h2 className="font-semibold text-sm">Available Forms</h2>
           <p className="text-xs text-muted-foreground mt-0.5">Select a form to fill</p>
@@ -55,7 +55,7 @@ export default function FormRendererPage() {
       </div>
 
       {/* Form Content */}
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto min-h-0">
         {!selectedFormId ? (
           <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
             <FileText className="h-12 w-12 mb-3 opacity-20" />
@@ -68,11 +68,11 @@ export default function FormRendererPage() {
             ))}
           </div>
         ) : schema ? (
-          <div className="max-w-2xl mx-auto p-8">
+          <div className="max-w-2xl mx-auto p-4 sm:p-8 pb-8">
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="glass-card p-6"
+              className="glass-card p-4 sm:p-6"
             >
               <h2 className="text-xl font-bold mb-1">{schema.name}</h2>
               <p className="text-sm text-muted-foreground mb-6">

@@ -59,14 +59,14 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 pb-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Dashboard</h1>
+          <h1 className="text-xl sm:text-2xl font-bold">Dashboard</h1>
           <p className="text-sm text-muted-foreground mt-1">Safety inspection overview</p>
         </div>
-        <Link to="/form-builder">
-          <Button>
+        <Link to="/form-builder" className="shrink-0">
+          <Button className="w-full sm:w-auto">
             <FileText className="h-4 w-4 mr-2" /> New Form Template
           </Button>
         </Link>
@@ -120,7 +120,7 @@ export default function Dashboard() {
               </div>
             ) : (
               submissions.slice(0, 5).map((sub) => (
-                <div key={sub.id} className="flex items-center gap-4 p-4 hover:bg-muted/50 transition-colors">
+                <div key={sub.id} className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4 p-4 hover:bg-muted/50 transition-colors">
                   <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center">
                     <CheckSquare className="h-4 w-4 text-primary" />
                   </div>
@@ -131,7 +131,7 @@ export default function Dashboard() {
                       {sub.branch_name || `Branch #${sub.branch_id}`}
                     </p>
                   </div>
-                  <div className="text-right">
+                  <div className="text-left sm:text-right">
                     <p className="text-xs text-muted-foreground flex items-center gap-1">
                       <Clock className="h-3 w-3" />
                       {formatDate(sub.created_at)}

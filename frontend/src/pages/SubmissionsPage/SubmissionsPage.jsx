@@ -57,7 +57,7 @@ export default function SubmissionsPage() {
   }, [subs.items, alertsOnly, query]);
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 pb-8">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <h1 className="text-2xl font-bold">Submissions</h1>
@@ -77,8 +77,10 @@ export default function SubmissionsPage() {
       </div>
 
       <div className="glass-card overflow-hidden">
+        {/* Table: horizontal scroll on small screens */}
+        <div className="overflow-x-auto -mx-px">
         {/* Table Header */}
-        <div className="grid grid-cols-12 gap-4 p-4 border-b bg-muted/30 text-xs font-medium text-muted-foreground uppercase tracking-wide">
+        <div className="grid grid-cols-12 gap-2 sm:gap-4 p-3 sm:p-4 border-b bg-muted/30 text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wide min-w-[640px]">
           <div className="col-span-1">#</div>
           <div className="col-span-3">Form</div>
           <div className="col-span-2">Branch</div>
@@ -104,7 +106,7 @@ export default function SubmissionsPage() {
               key={sub.id}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="grid grid-cols-12 gap-4 p-4 border-b hover:bg-muted/30 transition-colors items-center"
+              className="grid grid-cols-12 gap-2 sm:gap-4 p-3 sm:p-4 border-b hover:bg-muted/30 transition-colors items-center min-w-[640px]"
             >
               <div className="col-span-1 text-sm text-muted-foreground">
                 {sub.id}
@@ -154,10 +156,11 @@ export default function SubmissionsPage() {
             </motion.div>
           ))
         )}
+        </div>
 
         {/* Pagination */}
         {subs.pages > 1 && (
-          <div className="flex items-center justify-between p-4 border-t">
+          <div className="flex flex-wrap items-center justify-between gap-2 p-4 border-t">
             <p className="text-sm text-muted-foreground">
               Page {subs.page} of {subs.pages}
             </p>
@@ -185,7 +188,7 @@ export default function SubmissionsPage() {
 
       {/* Detail Dialog */}
       <Dialog open={!!selectedSub} onOpenChange={() => setSelectedSub(null)}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="w-[calc(100vw-2rem)] max-w-lg sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Submission #{selectedSub?.id}</DialogTitle>
           </DialogHeader>

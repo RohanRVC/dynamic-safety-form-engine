@@ -14,6 +14,8 @@ import {
   Bell,
   ChevronRight,
   AlertTriangle,
+  Menu,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useThemeStore } from "@/store/themeStore";
@@ -46,7 +48,13 @@ export default function Layout() {
   const location = useLocation();
   const [alertCount, setAlertCount] = useState(0);
   const [bellOpen, setBellOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const bellRef = useRef(null);
+
+  // Close mobile sidebar on route change
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [location.pathname]);
 
   // Apply dark class to <html> so entire app (body, main, cards) gets dark theme
   useEffect(() => {
@@ -84,10 +92,33 @@ export default function Layout() {
 
   return (
     <div className={cn("flex h-screen overflow-hidden", dark && "dark")}>
-      {/* Sidebar */}
-      <aside className="w-64 flex-shrink-0 bg-sidebar text-sidebar-foreground flex flex-col">
+      {/* Mobile backdrop */}
+      {sidebarOpen && (
+        <button
+          type="button"
+          aria-label="Close menu"
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+      {/* Sidebar: drawer on mobile, fixed column on lg+ */}
+      <aside
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 w-64 flex-shrink-0 bg-sidebar text-sidebar-foreground flex flex-col transition-transform duration-200 ease-out lg:relative lg:translate-x-0",
+          sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        )}
+      >
         <div className="p-5 flex items-center gap-3 border-b border-white/10">
-          <div className="h-9 w-9 rounded-lg bg-primary/20 flex items-center justify-center">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden -ml-1 shrink-0 text-sidebar-foreground hover:bg-sidebar-accent"
+            onClick={() => setSidebarOpen(false)}
+            aria-label="Close menu"
+          >
+            <X className="h-5 w-5" />
+          </Button>
+          <div className="h-9 w-9 rounded-lg bg-primary/20 flex items-center justify-center shrink-0">
             <Shield className="h-5 w-5 text-primary" />
           </div>
           <div>
@@ -135,13 +166,22 @@ export default function Layout() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden bg-background">
         {/* Top Bar */}
-        <header className="h-14 border-b bg-background/80 backdrop-blur-lg flex items-center justify-between px-6 flex-shrink-0">
-          <div className="flex items-center gap-3 flex-1 min-w-0">
-            <div className="relative flex-1 max-w-xs">
+        <header className="min-h-14 border-b bg-background/80 backdrop-blur-lg flex flex-wrap items-center justify-between gap-2 px-3 py-2 sm:px-6 sm:py-0 sm:h-14 sm:flex-nowrap flex-shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0 w-full sm:w-auto">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="lg:hidden shrink-0"
+              onClick={() => setSidebarOpen(true)}
+              aria-label="Open menu"
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+            <div className="relative flex-1 min-w-0 max-w-full sm:max-w-xs">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
               <input
                 type="text"
-                placeholder="Search forms & submissions..."
+                placeholder="Search…"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 className="h-9 w-full rounded-lg border bg-muted/50 pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-ring transition-all"

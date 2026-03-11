@@ -25,15 +25,15 @@ export default function FormBuilderPage() {
   }, [editId]);
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-full flex-col lg:flex-row overflow-hidden">
       {/* Left Panel: Form Builder */}
-      <div className="w-[380px] flex-shrink-0 border-r flex flex-col overflow-hidden">
+      <div className="w-full lg:w-[380px] flex-shrink-0 border-b lg:border-b-0 lg:border-r flex flex-col overflow-hidden min-h-[40vh] lg:min-h-0">
         <FormBuilder editId={editId ? Number(editId) : null} />
       </div>
 
       {/* Center Panel: Logic Builder + Live Preview */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-auto p-6 space-y-6">
+      <div className="flex-1 flex flex-col overflow-hidden min-h-0">
+        <div className="flex-1 overflow-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
           <LogicBuilder />
           <div className="glass-card overflow-hidden" style={{ minHeight: 400 }}>
             <LivePreview />
@@ -42,7 +42,7 @@ export default function FormBuilderPage() {
       </div>
 
       {/* Right Panel: Field Properties */}
-      <div className="w-[300px] flex-shrink-0 border-l overflow-hidden">
+      <div className="w-full lg:w-[300px] flex-shrink-0 border-t lg:border-t-0 lg:border-l overflow-hidden min-h-[280px] lg:min-h-0 max-h-[50vh] lg:max-h-none">
         <FieldEditor />
       </div>
     </div>
