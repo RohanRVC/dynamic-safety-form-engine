@@ -6,13 +6,10 @@ import {
   GitBranch,
   CheckSquare,
   AlertTriangle,
-  TrendingUp,
-  Video,
   ArrowRight,
   Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formApi, submissionApi, branchApi, API_BASE } from "@/services/api";
 import { formatDate } from "@/lib/utils";
@@ -69,14 +66,46 @@ export default function Dashboard() {
   }, []);
 
   const statCards = [
-    { label: "Form Templates", value: stats?.forms ?? 0, icon: FileText, color: "text-blue-500", bg: "bg-blue-500/10" },
-    { label: "Total Submissions", value: stats?.submissions ?? 0, icon: CheckSquare, color: "text-green-500", bg: "bg-green-500/10" },
-    { label: "Active Branches", value: stats?.branches ?? 0, icon: GitBranch, color: "text-purple-500", bg: "bg-purple-500/10" },
-    { label: "Safety Alerts", value: stats?.alerts ?? 0, icon: AlertTriangle, color: "text-orange-500", bg: "bg-orange-500/10" },
+    {
+      label: "Form Templates",
+      value: stats?.forms ?? 0,
+      icon: FileText,
+      color: "text-blue-600 dark:text-blue-400",
+      bg: "bg-blue-500/15 dark:bg-blue-500/20",
+      accent: "from-blue-500/20 via-blue-500/5 to-transparent",
+      borderAccent: "border-l-blue-500/50",
+    },
+    {
+      label: "Total Submissions",
+      value: stats?.submissions ?? 0,
+      icon: CheckSquare,
+      color: "text-emerald-600 dark:text-emerald-400",
+      bg: "bg-emerald-500/15 dark:bg-emerald-500/20",
+      accent: "from-emerald-500/20 via-emerald-500/5 to-transparent",
+      borderAccent: "border-l-emerald-500/50",
+    },
+    {
+      label: "Active Branches",
+      value: stats?.branches ?? 0,
+      icon: GitBranch,
+      color: "text-violet-600 dark:text-violet-400",
+      bg: "bg-violet-500/15 dark:bg-violet-500/20",
+      accent: "from-violet-500/20 via-violet-500/5 to-transparent",
+      borderAccent: "border-l-violet-500/50",
+    },
+    {
+      label: "Safety Alerts",
+      value: stats?.alerts ?? 0,
+      icon: AlertTriangle,
+      color: "text-amber-600 dark:text-amber-400",
+      bg: "bg-amber-500/15 dark:bg-amber-500/20",
+      accent: "from-amber-500/25 via-amber-500/5 to-transparent",
+      borderAccent: "border-l-amber-500/50",
+    },
   ];
 
   return (
-    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 pb-8">
+    <div className="dashboard-page p-4 sm:p-6 space-y-4 sm:space-y-6 pb-8">
       {loadError && (
         <div className="rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm">
           <p className="font-semibold text-destructive flex items-center gap-2">
@@ -94,8 +123,12 @@ export default function Dashboard() {
       )}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold">Dashboard</h1>
-          <p className="text-sm text-muted-foreground mt-1">Safety inspection overview</p>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
+            Dashboard
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1.5">
+            Safety inspection overview
+          </p>
         </div>
         <Link to="/form-builder" className="shrink-0">
           <Button className="w-full sm:w-auto">
@@ -117,17 +150,26 @@ export default function Dashboard() {
             variants={staggerItem}
             whileHover={{ y: -4, transition: spring.smooth }}
             whileTap={{ scale: 0.99 }}
-            className="glass-card p-5 hover:shadow-xl hover:shadow-primary/5 cursor-default"
+            className={`dashboard-stat-card p-5 cursor-default relative overflow-hidden border-l-4 ${s.borderAccent}`}
           >
+            {/* Soft color wash */}
+            <div
+              className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${s.accent} opacity-90`}
+              aria-hidden
+            />
             {loading ? (
-              <Skeleton className="h-20" />
+              <Skeleton className="h-20 relative rounded-lg" />
             ) : (
-              <div className="flex items-start justify-between">
+              <div className="flex items-start justify-between relative">
                 <div>
-                  <p className="text-sm text-muted-foreground">{s.label}</p>
-                  <p className="text-3xl font-bold mt-1">{s.value}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{s.label}</p>
+                  <p className="text-3xl font-bold mt-1.5 tabular-nums tracking-tight">
+                    {s.value}
+                  </p>
                 </div>
-                <div className={`h-10 w-10 rounded-xl ${s.bg} flex items-center justify-center`}>
+                <div
+                  className={`h-11 w-11 rounded-2xl ${s.bg} flex items-center justify-center shadow-inner ring-1 ring-black/5 dark:ring-white/10`}
+                >
                   <s.icon className={`h-5 w-5 ${s.color}`} />
                 </div>
               </div>
@@ -142,9 +184,9 @@ export default function Dashboard() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ ...spring.gentle, delay: 0.15 }}
-          className="lg:col-span-2 glass-card overflow-hidden"
+          className="lg:col-span-2 dashboard-panel"
         >
-          <div className="flex items-center justify-between p-4 border-b border-border/50">
+          <div className="dashboard-panel-header flex items-center justify-between">
             <h3 className="font-semibold">Recent Submissions</h3>
             <Link to="/submissions">
               <Button variant="ghost" size="sm">
@@ -152,7 +194,7 @@ export default function Dashboard() {
               </Button>
             </Link>
           </div>
-          <div className="divide-y divide-border/50">
+          <div className="divide-y divide-border/40 p-1">
             {loading ? (
               Array.from({ length: 3 }).map((_, i) => (
                 <div key={i} className="p-4"><Skeleton className="h-12" /></div>
@@ -165,9 +207,9 @@ export default function Dashboard() {
               submissions.slice(0, 5).map((sub) => (
                 <div
                   key={sub.id}
-                  className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4 p-4 hover:bg-muted/50 transition-all duration-300 rounded-lg mx-1 hover:translate-x-0.5"
+                  className="dashboard-row flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4 p-4 hover:translate-x-0.5"
                 >
-                  <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <div className="h-9 w-9 rounded-xl bg-primary/15 dark:bg-primary/25 flex items-center justify-center ring-1 ring-primary/10">
                     <CheckSquare className="h-4 w-4 text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -222,7 +264,7 @@ export default function Dashboard() {
                       initial={{ opacity: 0, scale: 0.98 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={spring.smooth}
-                      className="flex items-start gap-3 p-3 rounded-xl bg-orange-500/5 border border-orange-500/10 hover:bg-orange-500/10 transition-colors duration-300"
+                      className="flex items-start gap-3 p-3.5 rounded-xl bg-gradient-to-br from-amber-500/15 to-orange-500/5 dark:from-amber-500/20 dark:to-orange-500/10 border border-amber-500/20 dark:border-amber-500/25 hover:from-amber-500/20 hover:to-orange-500/10 transition-all duration-300 shadow-sm"
                     >
                       <AlertTriangle className="h-4 w-4 text-orange-500 mt-0.5 shrink-0" />
                       <div className="min-w-0">

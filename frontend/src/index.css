@@ -112,3 +112,75 @@ button {
 .animate-pulse {
   animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+/* Dashboard: richer than flat white — warm/cool mesh + tinted cards */
+.dashboard-page {
+  background:
+    radial-gradient(ellipse 100% 120% at 0% 0%, oklch(0.92 0.04 265 / 0.35), transparent 55%),
+    radial-gradient(ellipse 80% 80% at 100% 0%, oklch(0.92 0.06 145 / 0.12), transparent 50%),
+    radial-gradient(ellipse 60% 50% at 50% 100%, oklch(0.94 0.03 280 / 0.25), transparent 50%),
+    linear-gradient(180deg, oklch(0.97 0.008 265) 0%, oklch(0.985 0.004 265) 40%, oklch(0.98 0.006 265) 100%);
+  border-radius: 0;
+  min-height: 100%;
+}
+.dark .dashboard-page {
+  background:
+    radial-gradient(ellipse 90% 80% at 10% 10%, oklch(0.25 0.08 265 / 0.4), transparent 50%),
+    radial-gradient(ellipse 70% 60% at 90% 20%, oklch(0.22 0.05 145 / 0.15), transparent 45%),
+    linear-gradient(180deg, oklch(0.12 0.02 265) 0%, oklch(0.1 0.015 265) 100%);
+}
+
+.dashboard-stat-card {
+  @apply rounded-2xl border backdrop-blur-md shadow-md;
+  border-color: oklch(0.9 0.02 265 / 0.6);
+  background: linear-gradient(
+    145deg,
+    oklch(1 0 0 / 0.85) 0%,
+    oklch(0.99 0.01 265 / 0.75) 100%
+  );
+  box-shadow:
+    0 1px 0 oklch(1 0 0 / 0.6) inset,
+    0 8px 32px oklch(0.2 0.04 265 / 0.06);
+}
+.dark .dashboard-stat-card {
+  border-color: oklch(0.28 0.03 265 / 0.5);
+  background: linear-gradient(145deg, oklch(0.16 0.03 265 / 0.9) 0%, oklch(0.14 0.025 265 / 0.85) 100%);
+  box-shadow: 0 1px 0 oklch(1 0 0 / 0.04) inset, 0 8px 32px oklch(0 0 0 / 0.25);
+}
+
+.dashboard-panel {
+  @apply rounded-2xl border backdrop-blur-md overflow-hidden;
+  border-color: oklch(0.9 0.015 265 / 0.55);
+  background: linear-gradient(180deg, oklch(1 0 0 / 0.92) 0%, oklch(0.995 0.008 265 / 0.88) 100%);
+  box-shadow: 0 4px 24px oklch(0.2 0.03 265 / 0.05);
+}
+.dark .dashboard-panel {
+  border-color: oklch(0.26 0.025 265 / 0.5);
+  background: linear-gradient(180deg, oklch(0.15 0.025 265 / 0.95) 0%, oklch(0.13 0.02 265 / 0.9) 100%);
+  box-shadow: 0 4px 24px oklch(0 0 0 / 0.2);
+}
+
+.dashboard-panel-header {
+  @apply border-b px-4 py-4;
+  border-color: oklch(0.9 0.01 265 / 0.4);
+  background: linear-gradient(90deg, oklch(0.97 0.02 265 / 0.5) 0%, transparent 60%);
+}
+.dark .dashboard-panel-header {
+  border-color: oklch(0.25 0.02 265 / 0.4);
+  background: linear-gradient(90deg, oklch(0.18 0.03 265 / 0.4) 0%, transparent 60%);
+}
+
+.dashboard-row {
+  @apply transition-all duration-300 rounded-xl mx-1;
+  background: oklch(0.99 0.005 265 / 0.6);
+}
+.dashboard-row:hover {
+  background: oklch(0.96 0.02 265 / 0.55);
+  box-shadow: 0 2px 12px oklch(0.2 0.04 265 / 0.04);
+}
+.dark .dashboard-row {
+  background: oklch(0.16 0.02 265 / 0.35);
+}
+.dark .dashboard-row:hover {
+  background: oklch(0.2 0.03 265 / 0.45);
+}
