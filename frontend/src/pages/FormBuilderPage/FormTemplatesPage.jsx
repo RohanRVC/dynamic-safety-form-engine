@@ -54,10 +54,10 @@ export default function FormTemplatesPage() {
   };
 
   return (
-    <div className="page-shell p-4 sm:p-6 space-y-4 sm:space-y-6 pb-8">
+    <div className="page-shell p-4 sm:p-6 lg:p-8 space-y-5 pb-10">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold font-display tracking-tight">Form Templates</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold font-display tracking-tight">Form Templates</h1>
           <p className="text-sm text-muted-foreground mt-1">
             {query.trim() ? `${filteredForms.length} of ${forms.length} templates` : `${forms.length} templates created`}
           </p>

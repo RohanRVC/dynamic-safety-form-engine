@@ -16,13 +16,11 @@
           var stored = localStorage.getItem('theme-storage');
           if (stored) {
             var parsed = JSON.parse(stored);
-            if (parsed && parsed.state && parsed.state.dark) {
-              document.documentElement.classList.add('dark');
-              return;
-            }
+            var theme = parsed && parsed.state && parsed.state.theme;
+            if (theme === 'dark') document.documentElement.classList.add('dark');
+            else if (theme === 'evening') { document.documentElement.classList.add('dark', 'evening'); }
           }
         } catch (e) {}
-        document.documentElement.classList.remove('dark');
       })();
     </script>
     <div id="root"></div>

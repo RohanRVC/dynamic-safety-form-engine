@@ -9,8 +9,6 @@ import {
   CheckSquare,
   Settings,
   Shield,
-  Moon,
-  Sun,
   Search,
   Bell,
   ChevronRight,
@@ -19,6 +17,7 @@ import {
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { useThemeStore } from "@/store/themeStore";
 import { useSearchStore } from "@/store/searchStore";
 import { submissionApi } from "@/services/api";
@@ -44,7 +43,7 @@ const pathToBreadcrumb = {
 };
 
 export default function Layout() {
-  const { dark, toggle } = useThemeStore();
+  const { theme } = useThemeStore();
   const { query, setQuery } = useSearchStore();
   const location = useLocation();
   const [alertCount, setAlertCount] = useState(0);
@@ -52,21 +51,17 @@ export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const bellRef = useRef(null);
 
-  // Close mobile sidebar on route change
   useEffect(() => {
     setSidebarOpen(false);
   }, [location.pathname]);
 
-  // Apply dark class to <html> so entire app (body, main, cards) gets dark theme
   useEffect(() => {
-    if (dark) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [dark]);
+    const root = document.documentElement;
+    root.classList.remove("dark", "evening");
+    if (theme === "dark") root.classList.add("dark");
+    else if (theme === "evening") root.classList.add("dark", "evening");
+  }, [theme]);
 
-  // Fetch recent submissions to count safety alerts for notification bell
   useEffect(() => {
     submissionApi
       .listAll(1, 50)
@@ -77,7 +72,6 @@ export default function Layout() {
       .catch(() => setAlertCount(0));
   }, [location.pathname]);
 
-  // Close bell dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (bellRef.current && !bellRef.current.contains(e.target)) setBellOpen(false);
@@ -91,8 +85,10 @@ export default function Layout() {
     pathToBreadcrumb[pathname] ??
     (pathname.replace(/^\//, "").replace(/-/g, " ") || "Dashboard");
 
+  const isDark = theme !== "light";
+
   return (
-    <div className={cn("flex h-screen overflow-hidden", dark && "dark")}>
+    <div className={cn("flex h-screen overflow-hidden", isDark && "dark", theme === "evening" && "evening")}>
       {/* Mobile backdrop */}
       <AnimatePresence>
         {sidebarOpen && (
@@ -102,20 +98,22 @@ export default function Layout() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-[2px] lg:hidden"
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
             onClick={() => setSidebarOpen(false)}
           />
         )}
       </AnimatePresence>
-      {/* Sidebar: drawer on mobile, fixed column on lg+ */}
+
+      {/* ─── SIDEBAR ─── */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 flex-shrink-0 flex flex-col shadow-2xl shadow-black/30 lg:relative lg:shadow-xl lg:shadow-black/10 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] lg:translate-x-0 sidebar-glow text-sidebar-foreground border-r border-white/5",
+          "fixed inset-y-0 left-0 z-50 w-[260px] flex-shrink-0 flex flex-col sidebar-shell text-sidebar-foreground border-r border-white/[0.06] lg:relative transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] lg:translate-x-0",
           sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
-        <div className="p-5 flex items-center gap-3 border-b border-white/10">
+        {/* Brand */}
+        <div className="px-5 py-5 flex items-center gap-3">
           <Button
             variant="ghost"
             size="icon"
@@ -125,17 +123,21 @@ export default function Layout() {
           >
             <X className="h-5 w-5" />
           </Button>
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/40 to-primary/10 flex items-center justify-center shrink-0 ring-1 ring-primary/20 shadow-lg shadow-primary/10">
-            <Shield className="h-5 w-5 text-primary" />
+          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shrink-0 shadow-lg shadow-primary/20">
+            <Shield className="h-5 w-5 text-primary-foreground" />
           </div>
           <div className="min-w-0">
-            <h1 className="font-display font-bold text-sm leading-tight tracking-tight">Dynamic Safety</h1>
-            <p className="text-[11px] text-sidebar-muted font-medium">Form Engine</p>
-            <p className="text-[10px] text-sidebar-muted/70 mt-0.5">Safety inspections</p>
+            <h1 className="font-display font-bold text-sm leading-tight">Dynamic Safety</h1>
+            <p className="text-[11px] text-sidebar-muted">Form Engine</p>
           </div>
         </div>
 
-        <nav className="flex-1 p-3 space-y-1.5 overflow-y-auto">
+        {/* Divider */}
+        <div className="mx-4 h-px bg-white/[0.06]" />
+
+        {/* Navigation */}
+        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+          <p className="px-3 mb-2 text-[10px] uppercase tracking-widest text-sidebar-muted/60 font-semibold">Menu</p>
           {navItems.map((item) => (
             <NavLink
               key={item.to}
@@ -143,10 +145,10 @@ export default function Layout() {
               end={item.to === "/"}
               className={({ isActive }) =>
                 cn(
-                  "flex items-center gap-3 px-3 py-3 rounded-xl text-sm transition-all duration-300 ease-out group",
+                  "flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200 group",
                   isActive
-                    ? "bg-gradient-to-r from-primary/25 to-primary/5 text-white font-semibold shadow-lg shadow-black/20 ring-1 ring-primary/20"
-                    : "text-sidebar-muted hover:text-white hover:bg-white/5 hover:translate-x-1"
+                    ? "bg-primary/15 text-primary-foreground shadow-sm"
+                    : "text-sidebar-muted hover:text-sidebar-foreground hover:bg-white/[0.04]"
                 )
               }
             >
@@ -154,59 +156,79 @@ export default function Layout() {
                 <>
                   <span
                     className={cn(
-                      "flex h-8 w-8 items-center justify-center rounded-lg transition-colors shrink-0",
-                      isActive ? "bg-primary/25 text-primary" : "bg-white/5 group-hover:bg-white/10"
+                      "flex h-8 w-8 items-center justify-center rounded-lg transition-all shrink-0",
+                      isActive
+                        ? "bg-primary text-primary-foreground shadow-md shadow-primary/25"
+                        : "bg-white/[0.04] group-hover:bg-white/[0.08]"
                     )}
                   >
                     <item.icon className="h-4 w-4" />
                   </span>
-                  <span className="flex-1 font-display">{item.label}</span>
-                  <ChevronRight className="h-3.5 w-3.5 opacity-0 group-hover:opacity-40 transition-opacity shrink-0" />
+                  <span className="flex-1">{item.label}</span>
+                  {isActive && (
+                    <motion.div
+                      layoutId="nav-active"
+                      className="h-1.5 w-1.5 rounded-full bg-primary"
+                      transition={{ type: "spring", stiffness: 400, damping: 28 }}
+                    />
+                  )}
                 </>
               )}
             </NavLink>
           ))}
         </nav>
 
-        <div className="p-4 border-t border-white/10 bg-black/10">
-          <div className="flex items-center gap-3 rounded-xl bg-white/5 p-2.5 ring-1 ring-white/5">
-            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-primary/40 to-primary/10 flex items-center justify-center text-xs font-bold ring-2 ring-primary/20">
+        {/* User */}
+        <div className="p-4 border-t border-white/[0.06]">
+          <div className="flex items-center gap-3 rounded-xl bg-white/[0.04] p-3">
+            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-xs font-bold text-primary-foreground shadow-md">
               A
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold truncate font-display">Admin</p>
+              <p className="text-sm font-semibold truncate">Admin</p>
               <p className="text-[11px] text-sidebar-muted truncate">admin@safety.io</p>
             </div>
           </div>
         </div>
       </aside>
 
-      {/* Main Content */}
+      {/* ─── MAIN ─── */}
       <div className="flex-1 flex flex-col overflow-hidden bg-background app-surface">
         {/* Top Bar */}
-        <header className="min-h-14 border-b border-border/50 bg-background/70 backdrop-blur-xl flex flex-wrap items-center justify-between gap-2 px-3 py-2 sm:px-6 sm:py-0 sm:h-14 sm:flex-nowrap flex-shrink-0 shadow-sm shadow-black/5">
-          <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0 w-full sm:w-auto">
+        <header className="h-16 border-b border-border/50 bg-background/70 backdrop-blur-xl flex items-center justify-between px-4 sm:px-6 flex-shrink-0 gap-4">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden shrink-0 rounded-xl"
+              className="lg:hidden shrink-0"
               onClick={() => setSidebarOpen(true)}
               aria-label="Open menu"
             >
               <Menu className="h-5 w-5" />
             </Button>
-            <div className="relative flex-1 min-w-0 max-w-full sm:max-w-md">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+
+            {/* Breadcrumb */}
+            <div className="hidden md:flex items-center gap-1.5 text-sm text-muted-foreground">
+              <span>Pages</span>
+              <ChevronRight className="h-3.5 w-3.5" />
+              <span className="font-semibold text-foreground font-display">{breadcrumbLabel}</span>
+            </div>
+
+            {/* Search */}
+            <div className="relative flex-1 max-w-xs ml-auto sm:ml-4">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
               <input
                 type="text"
-                placeholder="Search templates, submissions…"
+                placeholder="Search…"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="h-10 w-full rounded-xl border border-input/60 bg-muted/40 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-inner"
+                className="h-9 w-full rounded-xl border border-border/60 bg-muted/40 pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/40 transition-all"
               />
             </div>
           </div>
+
           <div className="flex items-center gap-2">
+            {/* Bell */}
             <div className="relative" ref={bellRef}>
               <Button
                 variant="ghost"
@@ -214,80 +236,70 @@ export default function Layout() {
                 className="relative"
                 onClick={() => setBellOpen((o) => !o)}
               >
-                <Bell className="h-4 w-4" />
+                <Bell className="h-4.5 w-4.5" />
                 {alertCount > 0 && (
-                  <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-destructive" />
+                  <span className="absolute top-1.5 right-1.5 flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-destructive" />
+                  </span>
                 )}
               </Button>
               <AnimatePresence>
-              {bellOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: -8, scale: 0.96 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -8, scale: 0.96 }}
-                  transition={spring.snappy}
-                  className="absolute right-0 top-full mt-2 w-64 rounded-2xl border border-border/50 bg-popover/95 backdrop-blur-xl text-popover-foreground shadow-2xl shadow-black/15 z-50 p-4 origin-top-right"
-                >
-                  <p className="text-xs font-medium mb-2 flex items-center gap-2">
-                    <AlertTriangle className="h-4 w-4 text-orange-500" />
-                    Safety alerts
-                  </p>
-                  {alertCount > 0 ? (
-                    <>
-                      <p className="text-sm text-muted-foreground mb-3">
-                        You have {alertCount} safety alert{alertCount !== 1 ? "s" : ""}.
-                      </p>
-                      <div className="flex flex-col gap-1">
-                        <Link
-                          to="/"
-                          className="text-sm text-primary hover:underline"
-                          onClick={() => setBellOpen(false)}
-                        >
-                          View on Dashboard
-                        </Link>
-                        <Link
-                          to="/submissions?alerts=1"
-                          className="text-sm text-primary hover:underline"
-                          onClick={() => setBellOpen(false)}
-                        >
-                          View in Submissions
-                        </Link>
-                      </div>
-                    </>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">No active alerts</p>
-                  )}
-                </motion.div>
-              )}
+                {bellOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -6, scale: 0.97 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -6, scale: 0.97 }}
+                    transition={spring.snappy}
+                    className="absolute right-0 top-full mt-2 w-72 rounded-2xl border bg-popover/95 backdrop-blur-xl text-popover-foreground shadow-2xl z-50 p-4 origin-top-right"
+                  >
+                    <p className="text-xs font-semibold mb-3 flex items-center gap-2 uppercase tracking-wider text-muted-foreground">
+                      <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
+                      Safety Alerts
+                    </p>
+                    {alertCount > 0 ? (
+                      <>
+                        <p className="text-sm mb-3">
+                          You have <span className="font-bold text-primary">{alertCount}</span> active alert{alertCount !== 1 ? "s" : ""}.
+                        </p>
+                        <div className="flex flex-col gap-1.5">
+                          <Link to="/" className="text-sm text-primary hover:underline font-medium" onClick={() => setBellOpen(false)}>
+                            View on Dashboard
+                          </Link>
+                          <Link to="/submissions?alerts=1" className="text-sm text-primary hover:underline font-medium" onClick={() => setBellOpen(false)}>
+                            View in Submissions
+                          </Link>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">No active alerts</p>
+                    )}
+                  </motion.div>
+                )}
               </AnimatePresence>
             </div>
-            <Button variant="ghost" size="icon" onClick={toggle}>
-              {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </Button>
-            <div className="flex items-center gap-2 ml-2 pl-2 border-l">
-              <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center">
-                <span className="text-xs font-bold text-primary">A</span>
+
+            {/* Theme */}
+            <ThemeSwitcher />
+
+            {/* Avatar */}
+            <div className="flex items-center gap-2.5 ml-1 pl-3 border-l border-border/50">
+              <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-md">
+                <span className="text-xs font-bold text-primary-foreground">A</span>
               </div>
-              <span className="text-sm font-medium hidden sm:inline">Admin</span>
+              <span className="text-sm font-semibold hidden sm:inline">Admin</span>
             </div>
           </div>
         </header>
 
-        {/* Breadcrumb bar (thin line under header on larger screens) */}
-        <div className="hidden md:flex px-6 py-2 border-b border-border/40 bg-muted/30 backdrop-blur-sm items-center gap-2 text-xs">
-          <span className="text-muted-foreground">You are here</span>
-          <ChevronRight className="h-3 w-3 text-muted-foreground/60" />
-          <span className="font-display font-semibold text-foreground capitalize">{breadcrumbLabel}</span>
-        </div>
-
         {/* Page Content */}
-        <main className="flex-1 overflow-auto bg-transparent">
+        <main className="flex-1 overflow-auto">
           <motion.div
             key={location.pathname}
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={spring.gentle}
-            className="h-full min-h-full bg-transparent"
+            className="min-h-full"
           >
             <Outlet />
           </motion.div>

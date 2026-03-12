@@ -69,20 +69,20 @@ export default function BranchMetadataPage() {
 
   return (
     <motion.div
-      className="page-shell p-4 sm:p-6 space-y-4 sm:space-y-6 pb-8"
+      className="page-shell p-4 sm:p-6 lg:p-8 space-y-5 pb-10"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={spring.gentle}
     >
       <div>
-        <h1 className="text-2xl font-bold font-display tracking-tight">Branch Metadata</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold font-display tracking-tight">Branch Metadata</h1>
         <p className="text-sm text-muted-foreground mt-1">
           Manage job sites and branches
         </p>
       </div>
 
       {listError && (
-        <div className="rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm">
+        <div className="rounded-2xl border border-destructive/30 bg-destructive/5 px-5 py-4 text-sm">
           <p className="font-semibold text-destructive flex items-center gap-2">
             <AlertTriangle className="h-4 w-4 shrink-0" />
             Can&apos;t load or create branches until the API is reachable
@@ -96,12 +96,12 @@ export default function BranchMetadataPage() {
 
       {/* Add Branch */}
       <motion.div
-        className="glass-card p-5"
+        className="surface-panel p-6"
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ ...spring.gentle, delay: 0.04 }}
       >
-        <h3 className="font-semibold text-sm mb-4">Add New Branch</h3>
+        <h3 className="font-semibold font-display mb-4">Add New Branch</h3>
         <div className="flex gap-3 items-end">
           <div className="flex-1 space-y-1.5">
             <Label className="text-xs">Name</Label>

@@ -13,11 +13,11 @@ export default function FormRendererPage() {
   const { schema, loading: schemaLoading } = useFormSchema(selectedFormId);
 
   return (
-    <div className="flex h-full flex-col lg:flex-row overflow-hidden">
+    <div className="flex h-full flex-col lg:flex-row overflow-hidden page-shell">
       {/* Form Selector Sidebar */}
-      <div className="w-full lg:w-72 flex-shrink-0 border-b lg:border-b-0 lg:border-r flex flex-col max-h-[40vh] lg:max-h-none">
-        <div className="p-4 border-b">
-          <h2 className="font-semibold text-sm">Available Forms</h2>
+      <div className="w-full lg:w-72 flex-shrink-0 border-b lg:border-b-0 lg:border-r border-border/50 flex flex-col max-h-[40vh] lg:max-h-none bg-muted/20">
+        <div className="p-4 border-b border-border/50">
+          <h2 className="font-semibold font-display text-sm">Available Forms</h2>
           <p className="text-xs text-muted-foreground mt-0.5">Select a form to fill</p>
         </div>
         <div className="flex-1 overflow-auto p-3 space-y-1">
@@ -33,10 +33,10 @@ export default function FormRendererPage() {
                 key={form.id}
                 onClick={() => setSelectedFormId(form.id)}
                 className={cn(
-                  "w-full flex items-center gap-3 p-3 rounded-lg text-left transition-all duration-300",
+                  "w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all duration-200",
                   selectedFormId === form.id
-                    ? "bg-primary/10 border border-primary/20"
-                    : "hover:bg-muted"
+                    ? "bg-primary/10 border border-primary/20 shadow-sm"
+                    : "hover:bg-muted/50"
                 )}
               >
                 <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
@@ -74,9 +74,9 @@ export default function FormRendererPage() {
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={spring.gentle}
-              className="glass-card p-4 sm:p-6"
+              className="surface-panel p-5 sm:p-8"
             >
-              <h2 className="text-xl font-bold mb-1">{schema.name}</h2>
+              <h2 className="text-xl font-bold font-display mb-1">{schema.name}</h2>
               <p className="text-sm text-muted-foreground mb-6">
                 Version {schema.version} • Fill out all required fields
               </p>

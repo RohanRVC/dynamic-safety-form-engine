@@ -65,14 +65,14 @@ export default function SubmissionsPage() {
 
   return (
     <motion.div
-      className="page-shell p-4 sm:p-6 space-y-4 sm:space-y-6 pb-8"
+      className="page-shell p-4 sm:p-6 lg:p-8 space-y-5 pb-10"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={spring.gentle}
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h1 className="text-2xl font-bold">Submissions</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold font-display tracking-tight">Submissions</h1>
           <p className="text-sm text-muted-foreground mt-1">
             {alertsOnly
               ? `Showing ${filteredItems.length} safety alert${filteredItems.length !== 1 ? "s" : ""}`
@@ -89,7 +89,7 @@ export default function SubmissionsPage() {
       </div>
 
       {listError && (
-        <div className="rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm">
+        <div className="rounded-2xl border border-destructive/30 bg-destructive/5 px-5 py-4 text-sm">
           <p className="font-semibold text-destructive flex items-center gap-2">
             <AlertTriangle className="h-4 w-4 shrink-0" />
             {listError}
