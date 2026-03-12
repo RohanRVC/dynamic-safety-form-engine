@@ -295,16 +295,23 @@ export default function Layout() {
           </div>
         </header>
 
-        {/* Page Content */}
+        {/* Page Content + footer on every page */}
         <main className="flex-1 overflow-auto">
           <motion.div
             key={location.pathname}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={spring.gentle}
-            className="min-h-full"
+            className="min-h-full flex flex-col"
           >
-            <Outlet />
+            <div className="flex-1">
+              <Outlet />
+            </div>
+            <footer className="shrink-0 py-2 px-4 text-center border-t border-border/20 bg-background/30">
+              <p className="text-[10px] sm:text-[11px] text-muted-foreground/50 tracking-wide select-none">
+                made with 💖 by RohanRVC
+              </p>
+            </footer>
           </motion.div>
         </main>
       </div>
