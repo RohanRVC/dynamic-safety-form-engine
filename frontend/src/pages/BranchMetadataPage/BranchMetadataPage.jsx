@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Trash2, MapPin, GitBranch, Loader2 } from "lucide-react";
+import { Plus, Trash2, MapPin, GitBranch, Loader2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,20 +8,31 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { branchApi } from "@/services/api";
 import toast from "react-hot-toast";
 import { formatDate } from "@/lib/utils";
+import { API_BASE } from "@/services/api";
+import { spring } from "@/lib/motion";
 
 export default function BranchMetadataPage() {
   const [branches, setBranches] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [listError, setListError] = useState(null);
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
   const [creating, setCreating] = useState(false);
 
   const fetchBranches = () => {
     setLoading(true);
+    setListError(null);
     branchApi
       .list()
-      .then(setBranches)
-      .catch(() => toast.error("Failed to load branches"))
+      .then((data) => {
+        setBranches(Array.isArray(data) ? data : []);
+      })
+      .catch((err) => {
+        const msg = err?.message || "Failed to load branches";
+        setListError(msg);
+        toast.error(msg);
+        setBranches([]);
+      })
       .finally(() => setLoading(false));
   };
 
@@ -57,7 +68,12 @@ export default function BranchMetadataPage() {
   };
 
   return (
-    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 pb-8">
+    <motion.div
+      className="p-4 sm:p-6 space-y-4 sm:space-y-6 pb-8"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={spring.gentle}
+    >
       <div>
         <h1 className="text-2xl font-bold">Branch Metadata</h1>
         <p className="text-sm text-muted-foreground mt-1">
@@ -65,8 +81,26 @@ export default function BranchMetadataPage() {
         </p>
       </div>
 
+      {listError && (
+        <div className="rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm">
+          <p className="font-semibold text-destructive flex items-center gap-2">
+            <AlertTriangle className="h-4 w-4 shrink-0" />
+            Can&apos;t load or create branches until the API is reachable
+          </p>
+          <p className="mt-2 text-muted-foreground">{listError}</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            API: <code className="rounded bg-muted px-1">{API_BASE}</code>
+          </p>
+        </div>
+      )}
+
       {/* Add Branch */}
-      <div className="glass-card p-5">
+      <motion.div
+        className="glass-card p-5"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ ...spring.gentle, delay: 0.04 }}
+      >
         <h3 className="font-semibold text-sm mb-4">Add New Branch</h3>
         <div className="flex gap-3 items-end">
           <div className="flex-1 space-y-1.5">
@@ -90,10 +124,15 @@ export default function BranchMetadataPage() {
             Add Branch
           </Button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Branch List */}
-      <div className="glass-card overflow-hidden">
+      <motion.div
+        className="glass-card overflow-hidden"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ ...spring.gentle, delay: 0.08 }}
+      >
         <div className="p-4 border-b border-border/50">
           <h3 className="font-semibold text-sm">All Branches ({branches.length})</h3>
         </div>
@@ -109,10 +148,12 @@ export default function BranchMetadataPage() {
               {branches.map((branch) => (
                 <motion.div
                   key={branch.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="flex items-center gap-4 p-4 hover:bg-muted/30 transition-colors"
+                  layout
+                  initial={{ opacity: 0, x: -12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -24, transition: { duration: 0.2 } }}
+                  transition={spring.smooth}
+                  className="flex items-center gap-4 p-4 hover:bg-muted/40 transition-all duration-300"
                 >
                   <div className="h-10 w-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
                     <GitBranch className="h-5 w-5 text-purple-500" />
@@ -137,7 +178,7 @@ export default function BranchMetadataPage() {
             </AnimatePresence>
           )}
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

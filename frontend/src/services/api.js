@@ -1,15 +1,31 @@
 import axios from "axios";
 
-const API_BASE = import.meta.env.VITE_API_URL || "/api";
+/**
+ * Base URL for API requests.
+ * - Local dev: unset VITE_API_URL → "/api" (Vite proxies to backend).
+ * - Production: MUST set VITE_API_URL to your backend origin, e.g. https://your-api.onrender.com
+ *   (no trailing slash; paths are /metadata/..., /forms/...)
+ */
+export const API_BASE = import.meta.env.VITE_API_URL || "/api";
 
 const api = axios.create({
   baseURL: API_BASE,
   headers: { "Content-Type": "application/json" },
+  timeout: 30000,
 });
 
 api.interceptors.response.use(
   (res) => res,
   (err) => {
+    if (err.code === "ERR_NETWORK" || err.message === "Network Error") {
+      const hint =
+        API_BASE === "/api"
+          ? " Using /api only works with Vite dev server proxy. For production set VITE_API_URL to your backend URL."
+          : "";
+      return Promise.reject(
+        new Error(`Cannot reach API at ${API_BASE}.${hint}`)
+      );
+    }
     const message =
       err.response?.data?.detail?.validation_errors?.join(", ") ||
       err.response?.data?.detail ||

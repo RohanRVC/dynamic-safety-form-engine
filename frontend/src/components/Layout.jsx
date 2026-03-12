@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { NavLink, Outlet, Link, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { spring } from "@/lib/motion";
 import {
   LayoutDashboard,
   GitBranch,
@@ -93,18 +94,24 @@ export default function Layout() {
   return (
     <div className={cn("flex h-screen overflow-hidden", dark && "dark")}>
       {/* Mobile backdrop */}
-      {sidebarOpen && (
-        <button
-          type="button"
-          aria-label="Close menu"
-          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.button
+            type="button"
+            aria-label="Close menu"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-[2px] lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+      </AnimatePresence>
       {/* Sidebar: drawer on mobile, fixed column on lg+ */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 flex-shrink-0 bg-sidebar text-sidebar-foreground flex flex-col transition-transform duration-200 ease-out lg:relative lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 w-64 flex-shrink-0 bg-sidebar text-sidebar-foreground flex flex-col shadow-2xl shadow-black/25 lg:relative lg:shadow-none transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] lg:translate-x-0",
           sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
@@ -136,10 +143,10 @@ export default function Layout() {
               end={item.to === "/"}
               className={({ isActive }) =>
                 cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all group",
+                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-300 ease-out group",
                   isActive
-                    ? "bg-sidebar-accent text-white font-medium"
-                    : "text-sidebar-muted hover:text-white hover:bg-sidebar-accent/50"
+                    ? "bg-sidebar-accent text-white font-medium shadow-md shadow-black/20"
+                    : "text-sidebar-muted hover:text-white hover:bg-sidebar-accent/50 hover:translate-x-0.5"
                 )
               }
             >
@@ -164,7 +171,7 @@ export default function Layout() {
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden bg-background">
+      <div className="flex-1 flex flex-col overflow-hidden bg-background app-surface">
         {/* Top Bar */}
         <header className="min-h-14 border-b bg-background/80 backdrop-blur-lg flex flex-wrap items-center justify-between gap-2 px-3 py-2 sm:px-6 sm:py-0 sm:h-14 sm:flex-nowrap flex-shrink-0">
           <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0 w-full sm:w-auto">
@@ -201,8 +208,15 @@ export default function Layout() {
                   <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-destructive" />
                 )}
               </Button>
+              <AnimatePresence>
               {bellOpen && (
-                <div className="absolute right-0 top-full mt-1 w-64 rounded-lg border bg-popover text-popover-foreground shadow-lg z-50 p-3">
+                <motion.div
+                  initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -8, scale: 0.96 }}
+                  transition={spring.snappy}
+                  className="absolute right-0 top-full mt-1 w-64 rounded-xl border bg-popover text-popover-foreground shadow-xl shadow-black/10 z-50 p-3 origin-top-right"
+                >
                   <p className="text-xs font-medium mb-2 flex items-center gap-2">
                     <AlertTriangle className="h-4 w-4 text-orange-500" />
                     Safety alerts
@@ -232,8 +246,9 @@ export default function Layout() {
                   ) : (
                     <p className="text-sm text-muted-foreground">No active alerts</p>
                   )}
-                </div>
+                </motion.div>
               )}
+              </AnimatePresence>
             </div>
             <Button variant="ghost" size="icon" onClick={toggle}>
               {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
@@ -253,12 +268,13 @@ export default function Layout() {
         </div>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-auto bg-background">
+        <main className="flex-1 overflow-auto bg-transparent">
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
+            key={location.pathname}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
-            className="h-full min-h-full bg-background"
+            transition={spring.gentle}
+            className="h-full min-h-full bg-transparent"
           >
             <Outlet />
           </motion.div>

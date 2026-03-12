@@ -1,4 +1,6 @@
-import { Moon, Sun, Monitor } from "lucide-react";
+import { motion } from "framer-motion";
+import { Moon, Sun } from "lucide-react";
+import { spring } from "@/lib/motion";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -8,13 +10,23 @@ export default function SettingsPage() {
   const { dark, toggle } = useThemeStore();
 
   return (
-    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 max-w-2xl pb-8">
+    <motion.div
+      className="p-4 sm:p-6 space-y-4 sm:space-y-6 max-w-2xl pb-8"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={spring.gentle}
+    >
       <div>
         <h1 className="text-2xl font-bold">Settings</h1>
         <p className="text-sm text-muted-foreground mt-1">Application preferences</p>
       </div>
 
-      <div className="glass-card p-5 space-y-6">
+      <motion.div
+        className="glass-card p-5 space-y-6"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ ...spring.gentle, delay: 0.05 }}
+      >
         <h3 className="font-semibold">Appearance</h3>
 
         <div className="flex items-center justify-between">
@@ -29,16 +41,21 @@ export default function SettingsPage() {
           </div>
           <Switch checked={dark} onCheckedChange={toggle} />
         </div>
-      </div>
+      </motion.div>
 
-      <div className="glass-card p-5 space-y-4">
+      <motion.div
+        className="glass-card p-5 space-y-4"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ ...spring.gentle, delay: 0.1 }}
+      >
         <h3 className="font-semibold">About</h3>
         <div className="space-y-2 text-sm text-muted-foreground">
           <p>Dynamic Safety Form Engine v1.0.0</p>
           <p>Built with React, FastAPI, PostgreSQL</p>
           <p>Designed for safety inspection workflows</p>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

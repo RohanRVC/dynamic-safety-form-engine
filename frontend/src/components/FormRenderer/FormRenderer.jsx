@@ -30,7 +30,7 @@ export default function FormRenderer({ schema, logicRules = [], formId, onSucces
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [dynamicOptions, setDynamicOptions] = useState({});
-  const { branches } = useBranches();
+  const { branches, error: branchesError } = useBranches();
 
   const formValues = watch();
   const fields = schema?.fields || [];
@@ -102,6 +102,11 @@ export default function FormRenderer({ schema, logicRules = [], formId, onSucces
       {/* Branch selector */}
       <div className="space-y-2">
         <Label className="text-sm font-medium">Select Branch</Label>
+        {branchesError && (
+          <p className="text-xs text-destructive rounded-md border border-destructive/30 bg-destructive/10 px-2 py-1.5">
+            {branchesError} — fix API connection to load branches.
+          </p>
+        )}
         <Controller
           name="_branch_id"
           control={control}

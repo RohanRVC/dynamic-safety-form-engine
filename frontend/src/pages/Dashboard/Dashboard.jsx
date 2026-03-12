@@ -14,35 +14,52 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formApi, submissionApi, branchApi } from "@/services/api";
+import { formApi, submissionApi, branchApi, API_BASE } from "@/services/api";
 import { formatDate } from "@/lib/utils";
 import { isAlertSubmission } from "@/lib/alertUtils";
-
-const container = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.05 } },
-};
-const item = {
-  hidden: { opacity: 0, y: 10 },
-  show: { opacity: 1, y: 0 },
-};
+import { staggerContainer, staggerItem, spring } from "@/lib/motion";
 
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
 
   useEffect(() => {
-    Promise.all([
-      formApi.list().catch(() => []),
-      submissionApi.listAll(1, 20).catch(() => ({ items: [], total: 0 })),
-      branchApi.list().catch(() => []),
-    ]).then(([forms, subs, branches]) => {
+    setLoadError(null);
+    Promise.allSettled([
+      formApi.list(),
+      submissionApi.listAll(1, 20),
+      branchApi.list(),
+    ]).then((results) => {
+      const errors = [];
+      const forms =
+        results[0].status === "fulfilled" && Array.isArray(results[0].value)
+          ? results[0].value
+          : [];
+      if (results[0].status === "rejected") errors.push(`Forms: ${results[0].reason?.message || results[0].reason}`);
+
+      const subs =
+        results[1].status === "fulfilled" && results[1].value
+          ? results[1].value
+          : { items: [], total: 0 };
+      if (results[1].status === "rejected") errors.push(`Submissions: ${results[1].reason?.message || results[1].reason}`);
+
+      const branches =
+        results[2].status === "fulfilled" && Array.isArray(results[2].value)
+          ? results[2].value
+          : [];
+      if (results[2].status === "rejected") errors.push(`Branches: ${results[2].reason?.message || results[2].reason}`);
+
+      if (errors.length > 0) {
+        setLoadError(errors.join(" • "));
+      }
+
       const items = subs.items || [];
       const alertCount = items.filter(isAlertSubmission).length;
       setStats({
         forms: forms.length,
-        submissions: subs.total,
+        submissions: subs.total ?? 0,
         branches: branches.length,
         alerts: alertCount,
       });
@@ -60,6 +77,21 @@ export default function Dashboard() {
 
   return (
     <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 pb-8">
+      {loadError && (
+        <div className="rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm">
+          <p className="font-semibold text-destructive flex items-center gap-2">
+            <AlertTriangle className="h-4 w-4 shrink-0" />
+            Can&apos;t load data from the API
+          </p>
+          <p className="mt-2 text-muted-foreground">{loadError}</p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            API base: <code className="rounded bg-muted px-1 py-0.5">{API_BASE}</code>
+            {API_BASE === "/api" && (
+              <> — Production builds must set <code className="rounded bg-muted px-1">VITE_API_URL</code> to your backend URL and rebuild.</>
+            )}
+          </p>
+        </div>
+      )}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold">Dashboard</h1>
@@ -74,13 +106,19 @@ export default function Dashboard() {
 
       {/* Stat Cards */}
       <motion.div
-        variants={container}
+        variants={staggerContainer}
         initial="hidden"
         animate="show"
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
       >
         {statCards.map((s) => (
-          <motion.div key={s.label} variants={item} className="glass-card p-5">
+          <motion.div
+            key={s.label}
+            variants={staggerItem}
+            whileHover={{ y: -4, transition: spring.smooth }}
+            whileTap={{ scale: 0.99 }}
+            className="glass-card p-5 hover:shadow-xl hover:shadow-primary/5 cursor-default"
+          >
             {loading ? (
               <Skeleton className="h-20" />
             ) : (
@@ -100,7 +138,12 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Submissions */}
-        <div className="lg:col-span-2 glass-card">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ...spring.gentle, delay: 0.15 }}
+          className="lg:col-span-2 glass-card overflow-hidden"
+        >
           <div className="flex items-center justify-between p-4 border-b border-border/50">
             <h3 className="font-semibold">Recent Submissions</h3>
             <Link to="/submissions">
@@ -120,7 +163,10 @@ export default function Dashboard() {
               </div>
             ) : (
               submissions.slice(0, 5).map((sub) => (
-                <div key={sub.id} className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4 p-4 hover:bg-muted/50 transition-colors">
+                <div
+                  key={sub.id}
+                  className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4 p-4 hover:bg-muted/50 transition-all duration-300 rounded-lg mx-1 hover:translate-x-0.5"
+                >
                   <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center">
                     <CheckSquare className="h-4 w-4 text-primary" />
                   </div>
@@ -141,10 +187,15 @@ export default function Dashboard() {
               ))
             )}
           </div>
-        </div>
+        </motion.div>
 
         {/* Safety Alerts */}
-        <div className="glass-card">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ...spring.gentle, delay: 0.22 }}
+          className="glass-card overflow-hidden"
+        >
           <div className="p-4 border-b border-border/50">
             <h3 className="font-semibold">Safety Alerts</h3>
           </div>
@@ -165,7 +216,14 @@ export default function Dashboard() {
                   const d = sub.submission_data || {};
                   const label = d.damage_severity || d.severity || (d.damage === "Yes" ? "Damage reported" : (d.depth >= 4 ? "Safety warning (depth ≥ 4)" : "Alert"));
                   return (
-                    <div key={sub.id} className="flex items-start gap-3 p-3 rounded-lg bg-orange-500/5 border border-orange-500/10">
+                    <motion.div
+                      key={sub.id}
+                      layout
+                      initial={{ opacity: 0, scale: 0.98 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={spring.smooth}
+                      className="flex items-start gap-3 p-3 rounded-xl bg-orange-500/5 border border-orange-500/10 hover:bg-orange-500/10 transition-colors duration-300"
+                    >
                       <AlertTriangle className="h-4 w-4 text-orange-500 mt-0.5 shrink-0" />
                       <div className="min-w-0">
                         <p className="text-sm font-medium">
@@ -175,12 +233,12 @@ export default function Dashboard() {
                           {sub.branch_name} • {formatDate(sub.created_at)}
                         </p>
                       </div>
-                    </div>
+                    </motion.div>
                   );
                 })
             )}
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

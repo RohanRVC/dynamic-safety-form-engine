@@ -81,9 +81,11 @@ pip install -r requirements.txt
 cp .env.example .env
 # Edit .env with your database credentials
 
-# Run server
-uvicorn app.main:app --reload --port 8000
+# Run server (must be running before using the UI)
+uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
+
+**Quick check:** Open `http://127.0.0.1:8000/docs` — if you see Swagger, the API is up. If the Dashboard shows **Not Found** for Forms/Branches/Submissions, the frontend is not reaching this server (see Troubleshooting below).
 
 ### Frontend Setup
 
@@ -93,11 +95,13 @@ cd frontend
 # Install dependencies
 npm install
 
-# Run dev server (proxies API to localhost:8000)
+# Run dev server
 npm run dev
 ```
 
 The app will be available at `http://localhost:5173`.
+
+**Local API URL:** The repo includes `frontend/.env.development` with `VITE_API_URL=http://127.0.0.1:8000` so the browser calls the backend directly (avoids proxy/404 issues on Windows). **Restart `npm run dev`** after any `.env` change. If you prefer the Vite proxy only, remove or comment out `VITE_API_URL` in that file.
 
 ### Environment Variables
 
@@ -110,6 +114,13 @@ SUPABASE_KEY=your-anon-key
 SUPABASE_SERVICE_KEY=your-service-key
 CORS_ORIGINS=http://localhost:5173,http://localhost:3000
 ```
+
+## Troubleshooting: Dashboard shows "Not Found" and zeros
+
+1. **Backend must be running** on port 8000 before opening the app.
+2. Open **`http://127.0.0.1:8000/docs`** — if this fails, start uvicorn from `backend/` (see above).
+3. If you still see **Not Found** in the red banner, ensure `frontend/.env.development` has `VITE_API_URL=http://127.0.0.1:8000` and **restart** the Vite dev server.
+4. Your Supabase data is **not deleted** — the UI was failing to load because the API requests returned 404 until the backend is reachable.
 
 ## API Documentation
 

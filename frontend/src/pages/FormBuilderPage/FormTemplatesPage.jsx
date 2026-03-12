@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus,
   FileText,
+  AlertTriangle,
   Copy,
   Trash2,
   ExternalLink,
@@ -15,13 +16,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useForms } from "@/hooks/useFormSchema";
-import { formApi } from "@/services/api";
+import { formApi, API_BASE } from "@/services/api";
 import { useSearchStore } from "@/store/searchStore";
 import toast from "react-hot-toast";
 import { formatDate } from "@/lib/utils";
+import { spring } from "@/lib/motion";
 
 export default function FormTemplatesPage() {
-  const { forms, loading, refetch } = useForms();
+  const { forms, loading, error, refetch } = useForms();
   const navigate = useNavigate();
   const { query } = useSearchStore();
 
@@ -75,6 +77,23 @@ export default function FormTemplatesPage() {
         </div>
       </div>
 
+      {error && (
+        <div className="rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm">
+          <p className="font-semibold text-destructive flex items-center gap-2">
+            <AlertTriangle className="h-4 w-4 shrink-0" />
+            Failed to load templates
+          </p>
+          <p className="mt-2 text-muted-foreground">{error}</p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            API: <code className="rounded bg-muted px-1">{API_BASE}</code>
+            {API_BASE === "/api" && " — Set VITE_API_URL for production."}
+          </p>
+          <Button variant="outline" size="sm" className="mt-3" onClick={() => refetch()}>
+            Retry
+          </Button>
+        </div>
+      )}
+
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
@@ -110,10 +129,13 @@ export default function FormTemplatesPage() {
               <motion.div
                 key={form.id}
                 layout
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="glass-card p-5 flex flex-col hover:shadow-xl transition-shadow"
+                initial={{ opacity: 0, scale: 0.96, y: 12 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.96, y: -8 }}
+                transition={spring.gentle}
+                whileHover={{ y: -6, transition: spring.smooth }}
+                whileTap={{ scale: 0.99 }}
+                className="glass-card p-5 flex flex-col hover:shadow-xl hover:shadow-primary/5"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">

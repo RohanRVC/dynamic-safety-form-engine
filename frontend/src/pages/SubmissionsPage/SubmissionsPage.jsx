@@ -19,8 +19,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { submissionApi } from "@/services/api";
+import { submissionApi, API_BASE } from "@/services/api";
 import { formatDate } from "@/lib/utils";
+import { spring } from "@/lib/motion";
 import { useSearchStore } from "@/store/searchStore";
 import { isAlertSubmission } from "@/lib/alertUtils";
 
@@ -31,14 +32,19 @@ export default function SubmissionsPage() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [selectedSub, setSelectedSub] = useState(null);
+  const [listError, setListError] = useState(null);
   const { query } = useSearchStore();
 
   useEffect(() => {
     setLoading(true);
+    setListError(null);
     submissionApi
       .listAll(page, 15)
       .then(setSubs)
-      .catch(() => {})
+      .catch((err) => {
+        setListError(err?.message || "Failed to load submissions");
+        setSubs({ items: [], total: 0, page: 1, pages: 0 });
+      })
       .finally(() => setLoading(false));
   }, [page]);
 
@@ -57,7 +63,12 @@ export default function SubmissionsPage() {
   }, [subs.items, alertsOnly, query]);
 
   return (
-    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 pb-8">
+    <motion.div
+      className="p-4 sm:p-6 space-y-4 sm:space-y-6 pb-8"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={spring.gentle}
+    >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <h1 className="text-2xl font-bold">Submissions</h1>
@@ -76,7 +87,24 @@ export default function SubmissionsPage() {
         )}
       </div>
 
-      <div className="glass-card overflow-hidden">
+      {listError && (
+        <div className="rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm">
+          <p className="font-semibold text-destructive flex items-center gap-2">
+            <AlertTriangle className="h-4 w-4 shrink-0" />
+            {listError}
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            API: <code className="rounded bg-muted px-1">{API_BASE}</code>
+          </p>
+        </div>
+      )}
+
+      <motion.div
+        className="glass-card overflow-hidden"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ ...spring.gentle, delay: 0.06 }}
+      >
         {/* Table: horizontal scroll on small screens */}
         <div className="overflow-x-auto -mx-px">
         {/* Table Header */}
@@ -102,11 +130,9 @@ export default function SubmissionsPage() {
           </div>
         ) : (
           filteredItems.map((sub) => (
-            <motion.div
+            <div
               key={sub.id}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="grid grid-cols-12 gap-2 sm:gap-4 p-3 sm:p-4 border-b hover:bg-muted/30 transition-colors items-center min-w-[640px]"
+              className="grid grid-cols-12 gap-2 sm:gap-4 p-3 sm:p-4 border-b hover:bg-muted/40 transition-all duration-300 items-center min-w-[640px] hover:shadow-sm"
             >
               <div className="col-span-1 text-sm text-muted-foreground">
                 {sub.id}
@@ -153,7 +179,7 @@ export default function SubmissionsPage() {
                   <Eye className="h-4 w-4" />
                 </Button>
               </div>
-            </motion.div>
+            </div>
           ))
         )}
         </div>
@@ -184,7 +210,7 @@ export default function SubmissionsPage() {
             </div>
           </div>
         )}
-      </div>
+      </motion.div>
 
       {/* Detail Dialog */}
       <Dialog open={!!selectedSub} onOpenChange={() => setSelectedSub(null)}>
@@ -222,6 +248,6 @@ export default function SubmissionsPage() {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </motion.div>
   );
 }

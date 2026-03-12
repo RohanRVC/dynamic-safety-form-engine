@@ -73,4 +73,42 @@ body {
 
 @utility glass-card {
   @apply glass rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20;
+  transition:
+    box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.25s ease;
+}
+
+/* Subtle page background depth (light + dark) */
+.app-surface {
+  background:
+    radial-gradient(ellipse 120% 80% at 50% -20%, oklch(0.645 0.2 265 / 0.08), transparent 50%),
+    radial-gradient(ellipse 80% 50% at 100% 50%, oklch(0.645 0.15 265 / 0.04), transparent 45%),
+    var(--color-background);
+}
+.dark .app-surface {
+  background:
+    radial-gradient(ellipse 100% 60% at 50% 0%, oklch(0.541 0.2 265 / 0.12), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 0% 80%, oklch(0.541 0.15 265 / 0.06), transparent 50%),
+    var(--color-background);
+}
+
+/* Smoother focus for inputs */
+input,
+button {
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.25s ease,
+    transform 0.2s ease;
+}
+
+/* Smoother skeleton pulse */
+@keyframes pulse-soft {
+  50% {
+    opacity: 0.65;
+  }
+}
+.animate-pulse {
+  animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }

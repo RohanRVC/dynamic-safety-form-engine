@@ -5,6 +5,7 @@ import FormRenderer from "@/components/FormRenderer/FormRenderer";
 import { useFormSchema, useForms } from "@/hooks/useFormSchema";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { spring } from "@/lib/motion";
 
 export default function FormRendererPage() {
   const { forms, loading: formsLoading } = useForms();
@@ -32,7 +33,7 @@ export default function FormRendererPage() {
                 key={form.id}
                 onClick={() => setSelectedFormId(form.id)}
                 className={cn(
-                  "w-full flex items-center gap-3 p-3 rounded-lg text-left transition-all",
+                  "w-full flex items-center gap-3 p-3 rounded-lg text-left transition-all duration-300",
                   selectedFormId === form.id
                     ? "bg-primary/10 border border-primary/20"
                     : "hover:bg-muted"
@@ -70,8 +71,9 @@ export default function FormRendererPage() {
         ) : schema ? (
           <div className="max-w-2xl mx-auto p-4 sm:p-8 pb-8">
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
+              transition={spring.gentle}
               className="glass-card p-4 sm:p-6"
             >
               <h2 className="text-xl font-bold mb-1">{schema.name}</h2>

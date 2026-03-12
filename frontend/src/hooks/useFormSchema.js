@@ -30,29 +30,43 @@ export function useFormSchema(formId) {
 export function useBranches() {
   const [branches, setBranches] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    branchApi
-      .list()
-      .then(setBranches)
-      .catch(() => {})
-      .finally(() => setLoading(false));
+  const refetch = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await branchApi.list();
+      setBranches(Array.isArray(data) ? data : []);
+    } catch (err) {
+      setError(err.message || "Failed to load branches");
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  return { branches, loading };
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
+
+  return { branches, loading, error, refetch };
 }
 
 export function useForms() {
   const [forms, setForms] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const fetchForms = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const data = await formApi.list();
-      setForms(data);
-    } catch {
-      // silent
+      // Backend returns an array; guard if shape ever changes
+      setForms(Array.isArray(data) ? data : []);
+    } catch (err) {
+      setError(err.message || "Failed to load forms");
+      setForms([]);
     } finally {
       setLoading(false);
     }
@@ -62,5 +76,5 @@ export function useForms() {
     fetchForms();
   }, [fetchForms]);
 
-  return { forms, loading, refetch: fetchForms };
+  return { forms, loading, error, refetch: fetchForms };
 }
