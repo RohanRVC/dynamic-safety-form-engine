@@ -9,6 +9,7 @@ import FormRendererPage from "@/pages/FormRendererPage/FormRendererPage";
 import SubmissionsPage from "@/pages/SubmissionsPage/SubmissionsPage";
 import BranchMetadataPage from "@/pages/BranchMetadataPage/BranchMetadataPage";
 import SettingsPage from "@/pages/SettingsPage/SettingsPage";
+import HowToUsePage from "@/pages/GuidePage/HowToUsePage";
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
             <Route path="/submissions" element={<SubmissionsPage />} />
             <Route path="/branches" element={<BranchMetadataPage />} />
             <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/guide" element={<HowToUsePage />} />
           </Route>
         </Routes>
       </BrowserRouter>

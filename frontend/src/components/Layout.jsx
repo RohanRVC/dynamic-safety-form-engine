@@ -8,6 +8,7 @@ import {
   FileText,
   CheckSquare,
   Settings,
+  BookOpen,
   Shield,
   Search,
   Bell,
@@ -30,6 +31,7 @@ const navItems = [
   { to: "/form-templates", icon: FileText, label: "Form Templates" },
   { to: "/submissions", icon: CheckSquare, label: "Submissions" },
   { to: "/settings", icon: Settings, label: "Settings" },
+  { to: "/guide", icon: BookOpen, label: "How to use" },
 ];
 
 const pathToBreadcrumb = {
@@ -40,6 +42,7 @@ const pathToBreadcrumb = {
   "/form-renderer": "Fill Form",
   "/submissions": "Submissions",
   "/settings": "Settings",
+  "/guide": "How to use",
 };
 
 export default function Layout() {
