@@ -54,10 +54,10 @@ export default function FormTemplatesPage() {
   };
 
   return (
-    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 pb-8">
+    <div className="page-shell p-4 sm:p-6 space-y-4 sm:space-y-6 pb-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Form Templates</h1>
+          <h1 className="text-2xl font-bold font-display tracking-tight">Form Templates</h1>
           <p className="text-sm text-muted-foreground mt-1">
             {query.trim() ? `${filteredForms.length} of ${forms.length} templates` : `${forms.length} templates created`}
           </p>
@@ -101,7 +101,7 @@ export default function FormTemplatesPage() {
           ))}
         </div>
       ) : filteredForms.length === 0 ? (
-        <div className="glass-card p-12 text-center">
+        <div className="surface-panel p-12 text-center">
           <FileText className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
           <h3 className="text-lg font-semibold mb-1">
             {query.trim() ? "No matching templates" : "No templates yet"}
@@ -135,10 +135,10 @@ export default function FormTemplatesPage() {
                 transition={spring.gentle}
                 whileHover={{ y: -6, transition: spring.smooth }}
                 whileTap={{ scale: 0.99 }}
-                className="glass-card p-5 flex flex-col hover:shadow-xl hover:shadow-primary/5"
+                className="glass-card p-5 flex flex-col hover:shadow-xl hover:shadow-primary/10 ring-1 ring-black/5 dark:ring-white/5"
               >
                 <div className="flex items-start justify-between mb-3">
-                  <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center ring-1 ring-primary/10">
                     <FileText className="h-5 w-5 text-primary" />
                   </div>
                   <Badge variant="secondary" className="text-[10px]">

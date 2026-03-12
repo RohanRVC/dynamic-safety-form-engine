@@ -69,13 +69,13 @@ export default function BranchMetadataPage() {
 
   return (
     <motion.div
-      className="p-4 sm:p-6 space-y-4 sm:space-y-6 pb-8"
+      className="page-shell p-4 sm:p-6 space-y-4 sm:space-y-6 pb-8"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={spring.gentle}
     >
       <div>
-        <h1 className="text-2xl font-bold">Branch Metadata</h1>
+        <h1 className="text-2xl font-bold font-display tracking-tight">Branch Metadata</h1>
         <p className="text-sm text-muted-foreground mt-1">
           Manage job sites and branches
         </p>
@@ -128,7 +128,7 @@ export default function BranchMetadataPage() {
 
       {/* Branch List */}
       <motion.div
-        className="glass-card overflow-hidden"
+        className="surface-panel overflow-hidden"
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ ...spring.gentle, delay: 0.08 }}

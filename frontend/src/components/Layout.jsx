@@ -111,7 +111,7 @@ export default function Layout() {
       {/* Sidebar: drawer on mobile, fixed column on lg+ */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 flex-shrink-0 bg-sidebar text-sidebar-foreground flex flex-col shadow-2xl shadow-black/25 lg:relative lg:shadow-none transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 w-64 flex-shrink-0 flex flex-col shadow-2xl shadow-black/30 lg:relative lg:shadow-xl lg:shadow-black/10 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] lg:translate-x-0 sidebar-glow text-sidebar-foreground border-r border-white/5",
           sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
@@ -119,23 +119,23 @@ export default function Layout() {
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden -ml-1 shrink-0 text-sidebar-foreground hover:bg-sidebar-accent"
+            className="lg:hidden -ml-1 shrink-0 text-sidebar-foreground hover:bg-white/10 rounded-xl"
             onClick={() => setSidebarOpen(false)}
             aria-label="Close menu"
           >
             <X className="h-5 w-5" />
           </Button>
-          <div className="h-9 w-9 rounded-lg bg-primary/20 flex items-center justify-center shrink-0">
+          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/40 to-primary/10 flex items-center justify-center shrink-0 ring-1 ring-primary/20 shadow-lg shadow-primary/10">
             <Shield className="h-5 w-5 text-primary" />
           </div>
-          <div>
-            <h1 className="font-bold text-sm leading-tight">Dynamic Safety</h1>
-            <p className="text-xs text-sidebar-muted">Form Engine</p>
-            <p className="text-[10px] text-sidebar-muted/80 mt-0.5">Safety inspections</p>
+          <div className="min-w-0">
+            <h1 className="font-display font-bold text-sm leading-tight tracking-tight">Dynamic Safety</h1>
+            <p className="text-[11px] text-sidebar-muted font-medium">Form Engine</p>
+            <p className="text-[10px] text-sidebar-muted/70 mt-0.5">Safety inspections</p>
           </div>
         </div>
 
-        <nav className="flex-1 p-3 space-y-1">
+        <nav className="flex-1 p-3 space-y-1.5 overflow-y-auto">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
@@ -143,28 +143,39 @@ export default function Layout() {
               end={item.to === "/"}
               className={({ isActive }) =>
                 cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-300 ease-out group",
+                  "flex items-center gap-3 px-3 py-3 rounded-xl text-sm transition-all duration-300 ease-out group",
                   isActive
-                    ? "bg-sidebar-accent text-white font-medium shadow-md shadow-black/20"
-                    : "text-sidebar-muted hover:text-white hover:bg-sidebar-accent/50 hover:translate-x-0.5"
+                    ? "bg-gradient-to-r from-primary/25 to-primary/5 text-white font-semibold shadow-lg shadow-black/20 ring-1 ring-primary/20"
+                    : "text-sidebar-muted hover:text-white hover:bg-white/5 hover:translate-x-1"
                 )
               }
             >
-              <item.icon className="h-4 w-4" />
-              <span className="flex-1">{item.label}</span>
-              <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-50 transition-opacity" />
+              {({ isActive }) => (
+                <>
+                  <span
+                    className={cn(
+                      "flex h-8 w-8 items-center justify-center rounded-lg transition-colors shrink-0",
+                      isActive ? "bg-primary/25 text-primary" : "bg-white/5 group-hover:bg-white/10"
+                    )}
+                  >
+                    <item.icon className="h-4 w-4" />
+                  </span>
+                  <span className="flex-1 font-display">{item.label}</span>
+                  <ChevronRight className="h-3.5 w-3.5 opacity-0 group-hover:opacity-40 transition-opacity shrink-0" />
+                </>
+              )}
             </NavLink>
           ))}
         </nav>
 
-        <div className="p-4 border-t border-white/10">
-          <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-full bg-primary/30 flex items-center justify-center text-xs font-bold">
+        <div className="p-4 border-t border-white/10 bg-black/10">
+          <div className="flex items-center gap-3 rounded-xl bg-white/5 p-2.5 ring-1 ring-white/5">
+            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-primary/40 to-primary/10 flex items-center justify-center text-xs font-bold ring-2 ring-primary/20">
               A
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">Admin</p>
-              <p className="text-xs text-sidebar-muted truncate">admin@safety.io</p>
+              <p className="text-sm font-semibold truncate font-display">Admin</p>
+              <p className="text-[11px] text-sidebar-muted truncate">admin@safety.io</p>
             </div>
           </div>
         </div>
@@ -173,25 +184,25 @@ export default function Layout() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden bg-background app-surface">
         {/* Top Bar */}
-        <header className="min-h-14 border-b bg-background/80 backdrop-blur-lg flex flex-wrap items-center justify-between gap-2 px-3 py-2 sm:px-6 sm:py-0 sm:h-14 sm:flex-nowrap flex-shrink-0">
+        <header className="min-h-14 border-b border-border/50 bg-background/70 backdrop-blur-xl flex flex-wrap items-center justify-between gap-2 px-3 py-2 sm:px-6 sm:py-0 sm:h-14 sm:flex-nowrap flex-shrink-0 shadow-sm shadow-black/5">
           <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0 w-full sm:w-auto">
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden shrink-0"
+              className="lg:hidden shrink-0 rounded-xl"
               onClick={() => setSidebarOpen(true)}
               aria-label="Open menu"
             >
               <Menu className="h-5 w-5" />
             </Button>
-            <div className="relative flex-1 min-w-0 max-w-full sm:max-w-xs">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+            <div className="relative flex-1 min-w-0 max-w-full sm:max-w-md">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
               <input
                 type="text"
-                placeholder="Search…"
+                placeholder="Search templates, submissions…"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="h-9 w-full rounded-lg border bg-muted/50 pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-ring transition-all"
+                className="h-10 w-full rounded-xl border border-input/60 bg-muted/40 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-inner"
               />
             </div>
           </div>
@@ -215,7 +226,7 @@ export default function Layout() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -8, scale: 0.96 }}
                   transition={spring.snappy}
-                  className="absolute right-0 top-full mt-1 w-64 rounded-xl border bg-popover text-popover-foreground shadow-xl shadow-black/10 z-50 p-3 origin-top-right"
+                  className="absolute right-0 top-full mt-2 w-64 rounded-2xl border border-border/50 bg-popover/95 backdrop-blur-xl text-popover-foreground shadow-2xl shadow-black/15 z-50 p-4 origin-top-right"
                 >
                   <p className="text-xs font-medium mb-2 flex items-center gap-2">
                     <AlertTriangle className="h-4 w-4 text-orange-500" />
@@ -263,8 +274,10 @@ export default function Layout() {
         </header>
 
         {/* Breadcrumb bar (thin line under header on larger screens) */}
-        <div className="hidden md:block px-6 py-1.5 border-b bg-muted/20 text-xs text-muted-foreground">
-          <span className="capitalize">{breadcrumbLabel}</span>
+        <div className="hidden md:flex px-6 py-2 border-b border-border/40 bg-muted/30 backdrop-blur-sm items-center gap-2 text-xs">
+          <span className="text-muted-foreground">You are here</span>
+          <ChevronRight className="h-3 w-3 text-muted-foreground/60" />
+          <span className="font-display font-semibold text-foreground capitalize">{breadcrumbLabel}</span>
         </div>
 
         {/* Page Content */}

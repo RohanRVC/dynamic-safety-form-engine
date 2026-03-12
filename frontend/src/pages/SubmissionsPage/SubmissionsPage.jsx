@@ -4,6 +4,7 @@ import { useSearchParams, Link } from "react-router-dom";
 import {
   ChevronLeft,
   ChevronRight,
+  AlertTriangle,
   CheckSquare,
   GitBranch,
   Clock,
@@ -64,7 +65,7 @@ export default function SubmissionsPage() {
 
   return (
     <motion.div
-      className="p-4 sm:p-6 space-y-4 sm:space-y-6 pb-8"
+      className="page-shell p-4 sm:p-6 space-y-4 sm:space-y-6 pb-8"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={spring.gentle}
@@ -100,7 +101,7 @@ export default function SubmissionsPage() {
       )}
 
       <motion.div
-        className="glass-card overflow-hidden"
+        className="surface-panel overflow-hidden"
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ ...spring.gentle, delay: 0.06 }}

@@ -11,18 +11,18 @@ export default function SettingsPage() {
 
   return (
     <motion.div
-      className="p-4 sm:p-6 space-y-4 sm:space-y-6 max-w-2xl pb-8"
+      className="page-shell p-4 sm:p-6 space-y-4 sm:space-y-6 max-w-2xl pb-8"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={spring.gentle}
     >
       <div>
-        <h1 className="text-2xl font-bold">Settings</h1>
+        <h1 className="text-2xl font-bold font-display tracking-tight">Settings</h1>
         <p className="text-sm text-muted-foreground mt-1">Application preferences</p>
       </div>
 
       <motion.div
-        className="glass-card p-5 space-y-6"
+        className="surface-panel p-6 space-y-6"
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ ...spring.gentle, delay: 0.05 }}
@@ -44,7 +44,7 @@ export default function SettingsPage() {
       </motion.div>
 
       <motion.div
-        className="glass-card p-5 space-y-4"
+        className="surface-panel p-6 space-y-4"
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ ...spring.gentle, delay: 0.1 }}

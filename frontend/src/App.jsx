@@ -29,7 +29,8 @@ export default function App() {
       <Toaster
         position="top-right"
         toastOptions={{
-          className: "!bg-card !text-card-foreground !border !shadow-lg !rounded-xl",
+          className:
+            "!bg-card/95 !backdrop-blur-md !text-card-foreground !border !border-border/50 !shadow-2xl !shadow-black/10 !rounded-2xl !font-medium",
           duration: 4000,
         }}
       />
