@@ -32,6 +32,7 @@ export default function LivePreview() {
             schema={schema}
             logicRules={logicRules}
             formId={null}
+            showBranchSelector={false}
           />
         </div>
       </div>

@@ -25,7 +25,13 @@ import { submissionApi, branchApi } from "@/services/api";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 
-export default function FormRenderer({ schema, logicRules = [], formId, onSuccess }) {
+export default function FormRenderer({
+  schema,
+  logicRules = [],
+  formId,
+  onSuccess,
+  showBranchSelector = true,
+}) {
   const { control, handleSubmit, watch, formState: { errors }, reset } = useForm();
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -99,37 +105,39 @@ export default function FormRenderer({ schema, logicRules = [], formId, onSucces
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      {/* Branch selector */}
-      <div className="space-y-2">
-        <Label className="text-sm font-medium">Select Branch</Label>
-        {branchesError && (
-          <p className="text-xs text-destructive rounded-md border border-destructive/30 bg-destructive/10 px-2 py-1.5">
-            {branchesError} — fix API connection to load branches.
-          </p>
-        )}
-        <Controller
-          name="_branch_id"
-          control={control}
-          rules={{ required: "Branch is required" }}
-          render={({ field: f }) => (
-            <Select value={f.value || ""} onValueChange={f.onChange}>
-              <SelectTrigger className={cn(errors._branch_id && "border-destructive")}>
-                <SelectValue placeholder="Select branch..." />
-              </SelectTrigger>
-              <SelectContent>
-                {branches.map((b) => (
-                  <SelectItem key={b.id} value={String(b.id)}>
-                    {b.name} — {b.location}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+      {/* Branch selector (hidden in builder preview) */}
+      {showBranchSelector && (
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">Select Branch</Label>
+          {branchesError && (
+            <p className="text-xs text-destructive rounded-md border border-destructive/30 bg-destructive/10 px-2 py-1.5">
+              {branchesError} — fix API connection to load branches.
+            </p>
           )}
-        />
-        {errors._branch_id && (
-          <p className="text-xs text-destructive">{errors._branch_id.message}</p>
-        )}
-      </div>
+          <Controller
+            name="_branch_id"
+            control={control}
+            rules={{ required: "Branch is required" }}
+            render={({ field: f }) => (
+              <Select value={f.value || ""} onValueChange={f.onChange}>
+                <SelectTrigger className={cn(errors._branch_id && "border-destructive")}>
+                  <SelectValue placeholder="Select branch..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {branches.map((b) => (
+                    <SelectItem key={b.id} value={String(b.id)}>
+                      {b.name} — {b.location}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+          {errors._branch_id && (
+            <p className="text-xs text-destructive">{errors._branch_id.message}</p>
+          )}
+        </div>
+      )}
 
       {/* Dynamic fields */}
       <AnimatePresence>
