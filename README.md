@@ -4,7 +4,7 @@ A full-stack, production-quality dynamic form engine for safety inspections. Adm
 
 Live Link-: https://dynamic-safety-form-engine.vercel.app/
 
-<img width="1919" height="996" alt="image" src="https://github.com/user-attachments/assets/4c58d21f-2ce9-49d8-b695-91369f824971" />
+<img width="1919" height="991" alt="image" src="https://github.com/user-attachments/assets/c9bff883-f8b0-4c55-b9f0-8fe1cb1650cc" />
 
 ## Architecture Overview
 
